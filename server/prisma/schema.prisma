@@ -11,10 +11,43 @@ datasource db {
 }
 
 model Habit {
-  id  String @id @default(uuid())
-  title String
-  created_at DateTime 
+  id         String   @id @default(uuid())
+  title      String
+  created_at DateTime
+
+  days DayHabit[]
 
   @@map("habits")
 }
 
+model Day {
+  id  String   @id @default(uuid())
+  day DateTime
+
+  habits DayHabit[]
+
+  @@unique([day])
+  @@map("days")
+}
+
+model DayHabit {
+  id       String @id @default(uuid())
+  habit_id String
+  day_id   String
+
+  day   Day   @relation(fields: [day_id], references: [id])
+  habit Habit @relation(fields: [habit_id], references: [id])
+
+  @@unique([day_id, habit_id])
+  @@map("day_habits")
+}
+
+model HabitWeekDay {
+  id String @id @default(uuid())
+
+  habit_id String
+  week_day Int
+
+  @@unique([habit_id, week_day])
+  @@map("habit_week_days")
+}
